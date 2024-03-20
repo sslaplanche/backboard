@@ -1,0 +1,7 @@
+.meta/
+.old/
+
+.venv/
+
+redis-stable/
+run-redis.sh

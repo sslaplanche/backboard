@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}BACKBOARD -> Homepage{% endblock %}
+
+{% block head %}
+    <style>
+        
+        .flex-center {
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card {
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.05);
+            padding: 1rem;
+        }
+
+        #home-grid {
+            padding-top: 24px;
+            width: 90%;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+        }
+
+        @media (min-width: 1000px) {
+            #home-grid {
+                width: 50%;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="flex-center">
+        <div id="home-grid">
+
+            <!-- Page Header -->
+            <div class="flex-center">
+                <h1>BACKBOARD</h1>
+                <p style="font-size: 0.9rem; font-style: italic; color: #000000AA;">
+                    An Interpretation of NBA Stats & Data
+                </p>
+            </div>
+
+            <!-- About -->
+            <div>
+                <p style="font-weight: 600;">
+                    A note from the developer: 
+                </p>
+                <p style="font-style: italic;"> 
+                    This is a continuous work-in-progress project and is primarily for my own personal use, 
+                    but I have this live on github for anyone else interested in using it. As I continue to work on this, I will be adding more features
+                    and tools that I feel are worthy of time being spent on them. If you have any suggestions or feedback, I will add a proper way to do so 
+                    soon, as I want to focus on getting the fundamentals of this project in place first. Thanks for checking it out! 
+                    <p>
+                    - Shey 👨‍🚀
+                </p>
+            </div>
+
+            <!-- Navigation -->
+            <div class="card">
+                <h3>Tools</h3>
+                <ul>
+                    <li>
+                        <a href="/daily">Today's Fantasy Rankings</a>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

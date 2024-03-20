@@ -1,0 +1,60 @@
+body {
+    font-family: "Public Sans", sans-serif;
+    font-optical-sizing: auto;
+    margin: 0;
+}
+
+h1 {
+    font-family: 'Old Standard TT', serif;
+    font-size: 2.5em;
+    font-weight: 500;
+    margin: 0;
+    padding: 0;
+}
+
+h2, h3, h4, h5, h6 {
+    font-family: 'Public Sans', serif;
+    font-weight: 600;
+    margin: 0;
+    padding: 0;
+}
+
+p {
+    padding-bottom: 1rem;
+    margin: 0;
+    line-height: 1.2;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+table th, table td {
+    padding: 5px;
+    /* font-weight: 400; */
+    font-style: normal;
+    font-size: 14px;
+}
+
+th {
+    font-weight: 700;
+    text-align: left;
+}
+
+/* Row bottom borders */
+thead tr { border-bottom: 2px solid rgba(0, 0, 0, 0.8); }
+tbody tr { border-bottom: 1px solid rgba(0, 0, 0, 0.6); }
+
+/* Row hover */
+tbody tr:hover { 
+    background-color: rgba(0, 0, 0, 0.1); 
+    cursor: default;
+}
+  
+.container {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}

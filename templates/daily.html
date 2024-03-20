@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+
+{% block title %}
+Daily Report
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div style="margin-top: 24px; max-width: 600px; width: 600px;">
+        <h1 id="todays-date"></h1>
+
+        <details style="width: 100%; cursor: pointer; margin-top: 8px; margin-bottom: 8px;">
+            <summary>How to interpret this table</summary>
+            <div style="padding: 8px; background-color: #00000022">
+                <p>
+                    This table shows the performance of each player in today's games. The color of each cell represents the player's performance in that category compared to their season averages. 
+                    <br><br>
+                    MIN and TO are inverted to show that lower values are "better" when calculating FP per-minute
+                    <br><br>
+                    Players who played less than 15 minutes have been omitted
+                </p>
+                <div style="background: linear-gradient(to right, #ff0000dd, #fafafadd, #00ff00dd); width: 100%; height: 50px;">
+                    <div style="width: 100%; height: 100%; display: flex; justify-content: space-between;">
+                        <div style="height: 100%; display: flex; flex-direction: column; justify-content: center;">Worse</div>
+                        <div style="height: 100%; display: flex; flex-direction: column; justify-content: center;">Average</div>
+                        <div style="height: 100%; display: flex; flex-direction: column; justify-content: center;">Better</div>
+                    </div>
+                </div>
+                
+            </div>
+        </details>
+
+        <div id="daily-table" class="data-table" />
+        <div id="stat-disclaimers" />
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script>
+    
+    function calculateColor(currentValue, averageValue, invert=false) {
+            // Calculate the difference between the current and average values
+            var difference = (currentValue - averageValue) / averageValue;
+
+            // Scale the difference to a color range
+            var colorScale = d3.scaleLinear()
+                .domain([
+                    -2,
+                    0, 
+                    2
+                ])  // Adjust the domain as needed
+                .range(["#ff0000dd", "#fafafadd", "#00ff00dd"]);  // Adjust the colors as needed
+
+            // Invert the color scale if invert is true
+            if (invert) {
+                colorScale.range(colorScale.range().reverse());
+            }
+
+            // Map the difference to a color using the color scale
+            const c = colorScale(difference);
+            console.log(`Difference: ${difference}, Color: ${c}`);
+            return c
+        }
+
+    window.onload = function() {
+        // Example data for the table
+        const data = {{ context.todays_players | tojson }};
+
+        // Create table element
+        var table = document.createElement('table');
+
+        // Column order
+        const columnNames = ['Player', 'MIN', 'PTS', 'REB', 'AST', 'STL', 'BLK', 'TO', 'FP', 'Game'];
+
+        // Create table header
+        var thead = document.createElement('thead');
+        var headerRow = document.createElement('tr');
+        for (var i = 0; i < columnNames.length; i++) {
+            var th = document.createElement('th');
+            th.textContent = columnNames[i];
+            headerRow.appendChild(th);
+        }
+        thead.appendChild(headerRow);
+        table.appendChild(thead);
+
+        // Create table body
+        var tbody = document.createElement('tbody');
+        data.forEach(function(rowData) {
+            var tr = document.createElement('tr'); 
+
+            // Player name 
+            var player_name_td = tr.appendChild(document.createElement('td'));
+            player_name_td.innerHTML = rowData['first_name'] + ' ' + rowData['last_name'] + 
+            ' <span style="color: #00000055; font-size: 12px;">' + rowData['team']['tricode'] + '</span>';
+            player_name_td.style.width = '100%';
+
+            // Player stats
+            var min_td = tr.appendChild(document.createElement('td'));
+            min_td.textContent = rowData['min'];
+            min_td.style.backgroundColor = calculateColor(rowData['sec'], rowData['sec_pg'], invert=true);
+            
+            var pts_td = tr.appendChild(document.createElement('td'));
+            pts_td.textContent = rowData['pts'];
+            pts_td.style.backgroundColor = calculateColor(rowData['pts'], rowData['pts_pg']);
+
+            var reb_td = tr.appendChild(document.createElement('td'));
+            reb_td.textContent = rowData['reb']
+            reb_td.style.backgroundColor = calculateColor(rowData['reb'], rowData['reb_pg']);
+
+            var ast_td = tr.appendChild(document.createElement('td'));
+            ast_td.textContent = rowData['ast'];
+            ast_td.style.backgroundColor = calculateColor(rowData['ast'], rowData['ast_pg']);
+
+            var stl_td = tr.appendChild(document.createElement('td'));
+            stl_td.textContent = rowData['stl'];
+            stl_td.style.backgroundColor = calculateColor(rowData['stl'], rowData['stl_pg']);
+
+            var blk_td = tr.appendChild(document.createElement('td'));
+            blk_td.textContent = rowData['blk'];
+            blk_td.style.backgroundColor = calculateColor(rowData['blk'], rowData['blk_pg']);
+
+            var tov_td = tr.appendChild(document.createElement('td'));
+            tov_td.textContent = rowData['tov'];
+            tov_td.style.backgroundColor = calculateColor(rowData['tov'], rowData['tov_pg'], invert=true);
+
+            var fp_td = tr.appendChild(document.createElement('td'));
+            fp_td.textContent = rowData['fp'];
+            fp_td.style.backgroundColor = calculateColor(rowData['fp'], rowData['fp_pg']);
+            
+            var game_td = tr.appendChild(document.createElement('td'));
+            game_td.textContent = rowData['game_status'] + ' vs. ' + rowData['opp_team']['tricode'];
+            game_td.style.fontSize = '12px';
+            game_td.style.whiteSpace = 'nowrap';
+            
+
+            tbody.appendChild(tr);
+        });
+        table.appendChild(tbody);
+
+        // Append table to the div
+        var dailyTableDiv = document.getElementById('daily-table');
+        dailyTableDiv.appendChild(table);
+
+
+        // Set the date heading
+        var date = new Date();
+        var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('todays-date').textContent = date.toLocaleDateString('en-US', {timeZone: 'America/Los_Angeles', weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'});
+    
+    };
+</script>
+{% endblock %}

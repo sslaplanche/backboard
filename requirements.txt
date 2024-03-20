@@ -1,0 +1,6 @@
+Flask
+Flask-Cors
+isodate
+nba-api
+pandas
+celery
